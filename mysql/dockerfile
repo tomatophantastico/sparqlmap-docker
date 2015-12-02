@@ -1,0 +1,32 @@
+FROM ubuntu
+
+#update
+RUN apt-get update
+
+#Install Mysql
+RUN apt-get -y install mysql-server
+
+#Add sql files
+ADD /dataset/*.sql /tmp/
+
+#Set IP-Adress
+RUN sed -i -e"s/^bind-address\s*=\s*127.0.0.1/bind-address = 0.0.0.0/" /etc/mysql/my.cnf
+
+# Add Admin User
+RUN /usr/sbin/mysqld & \
+    sleep 10s &&\
+    echo "GRANT ALL ON *.* TO admin@'%' IDENTIFIED BY 'password' WITH GRANT OPTION; FLUSH PRIVILEGES" | mysql
+
+#Add import_data.sh
+ADD import_data.sh /tmp/import_data.sh
+RUN chmod +x /tmp/import_data.sh
+
+#import data
+RUN sudo service mysql start && /tmp/import_data.sh
+RUN sudo service mysql stop
+
+
+
+EXPOSE 3306
+
+CMD ["/usr/bin/mysqld_safe"]
