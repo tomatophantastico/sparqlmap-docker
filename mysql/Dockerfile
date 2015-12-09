@@ -1,5 +1,6 @@
-FROM debian:jessie
 
+FROM debian:jessie
+#modifed file from https://github.com/docker-library/mysql/blob/ac05512a1b788e8ae658d0f4a980ff7a01a51c93/5.6/Dockerfile
 ADD dataset/*.sql /tmp/
 ADD import_data.sh /tmp/import_data.sh
 RUN chmod +x /tmp/import_data.sh
