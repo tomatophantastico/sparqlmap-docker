@@ -4,21 +4,10 @@ WORKDIR /usr
 
 RUN wget https://github.com/tomatophantastico/sparqlmap/releases/download/v0.6.4-SNAPSHOT/sparqlmap.zip
 RUN unzip sparqlmap.zip && rm -r sparqlmap.zip
-RUN apt-get -y install mysql-client
 
-
-RUN ls
-RUN cd sparqlmap && ls
+RUN cd sparqlmap 
 
 ADD driver/mysql-connector-java-5.1.37-bin.jar /usr/sparqlmap/lib/mysql-connector-java-5.1.37-bin.jar
 ADD db.properties /usr/sparqlmap/bin/
 
-RUN cd /usr/sparqlmap/bin/ && ls
-
-
-
-#CMD cd /usr/sparqlmap/lib && ls
-
-
-
-CMD cd /usr/sparqlmap/bin/ && ./sparqlmap -dbfile db.properties
+CMD cd /usr/sparqlmap/bin/ && ./sparqlmap -dbfile db.properties -generateMapping

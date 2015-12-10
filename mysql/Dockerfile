@@ -1,6 +1,6 @@
-
-FROM debian:jessie
 #modifed file from https://github.com/docker-library/mysql/blob/ac05512a1b788e8ae658d0f4a980ff7a01a51c93/5.6/Dockerfile
+FROM debian:jessie
+
 ADD dataset/*.sql /tmp/
 ADD import_data.sh /tmp/import_data.sh
 RUN chmod +x /tmp/import_data.sh
@@ -33,7 +33,7 @@ RUN { \
 		echo mysql-community-server mysql-community-server/re-root-pass password ''; \
 		echo mysql-community-server mysql-community-server/remove-test-db select false; \
 	} | debconf-set-selections \
-	&& apt-get update && apt-get install -y mysql-server="${MYSQL_VERSION}" && rm -rf /var/lib/apt/lists/* \
+	&& apt-get update && apt-get install -y mysql-server && rm -rf /var/lib/apt/lists/* \
 	&& rm -rf /var/lib/mysql && mkdir -p /var/lib/mysql
 
 #import data
@@ -41,9 +41,14 @@ RUN  service mysql start && /tmp/import_data.sh
 
 # comment out a few problematic configuration values
 # don't reverse lookup hostnames, they are usually another container
-RUN sed -Ei 's/^(bind-address|log)/#&/' /etc/mysql/my.cnf \
-	&& echo 'skip-host-cache\nskip-name-resolve' | awk '{ print } $1 == "[mysqld]" && c == 0 { c = 1; system("cat") }' /etc/mysql/my.cnf > /tmp/my.cnf \
-	&& mv /tmp/my.cnf /etc/mysql/my.cnf
+#RUN sed -Ei 's/^(bind-address|log)/#&/' /etc/mysql/my.cnf \
+#	&& echo 'skip-host-cache\nskip-name-resolve' | awk '{ print } $1 == "[mysqld]" && c == 0 { c = 1; system("cat") }' /etc/mysql/my.cnf > /tmp/#my.cnf \
+#	&& mv /tmp/my.cnf /etc/mysql/my.cnf
+
+RUN sed -i -e"s/^bind-address\s*=\s*127.0.0.1/bind-address = 0.0.0.0/" /etc/mysql/my.cnf
+
+RUN service mysql start && \
+    echo "GRANT ALL ON *.* TO admin@'%' IDENTIFIED BY 'password' WITH GRANT OPTION; FLUSH PRIVILEGES" | mysql
 
 VOLUME /var/lib/mysql
 
@@ -52,4 +57,3 @@ ENTRYPOINT ["/entrypoint.sh"]
 
 EXPOSE 3306
 CMD ["mysqld"]
-
