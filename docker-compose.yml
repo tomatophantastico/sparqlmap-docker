@@ -1,0 +1,13 @@
+database:
+  build: mysql
+  ports: 
+  - "172.17.42.1:3306:3306"
+sparqlmap:
+  build: sparqlmap_dockerfile
+  environment:
+  - DB_URL="jdbc:mysql://172.17.42.1:3306/benchmark?padCharsWithSpace=true&sessionVariables=sql_mode='ANSI_QUOTES'" 
+  - DB_USER=admin 
+  - DB_PASS=password
+  links:
+  - database
+       

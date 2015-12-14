@@ -10,4 +10,6 @@ RUN cd sparqlmap
 ADD driver/mysql-connector-java-5.1.37-bin.jar /usr/sparqlmap/lib/mysql-connector-java-5.1.37-bin.jar
 ADD db.properties /usr/sparqlmap/bin/
 
-CMD cd /usr/sparqlmap/bin/ && ./sparqlmap -dbfile db.properties -generateMapping
+WORKDIR  /usr/sparqlmap/bin/ 
+CMD ./sparqlmap -dburi $DB_URL -dbuser $DB_USER -dbpass $DB_PASS -dumb 
+

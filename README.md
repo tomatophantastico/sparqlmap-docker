@@ -15,7 +15,7 @@ You can start this image with
 
 ``sudo docker run -p 172.17.42.1:3306:3306 mysql ``
 
--p 72.17.42.1:3306:3306  create a one directional linking. So you can use mysql workbench or an other docker image to connect with this mysql-server.
+-p 172.17.42.1:3306:3306  create a one directional linking. So you can use mysql workbench or an other docker image to connect with this mysql-server.
 
 The default data are:
 
@@ -51,7 +51,7 @@ You can find the config data in the file db.properties. This file include
 the jdbc url, username and password. Before build you must change it to your database. Default it works
 with the mysql docker.
 
-    jdbc.url=jdbc:mysql://172.17.42.1:3307/benchmark?padCharsWithSpace=true&sessionVariables=sql_mode='ANSI_QUOTES'
+    jdbc.url=jdbc:mysql://172.17.42.1:3306/benchmark?padCharsWithSpace=true&sessionVariables=sql_mode='ANSI_QUOTES'
     jdbc.username=admin
     jdbc.password=password
     jdbc.poolminconnections=5
@@ -60,7 +60,7 @@ with the mysql docker.
 ### Build and Run
 
 You can build the image with
- ``sudo docker run build -t sparqlmap .``
+ ``sudo docker  build -t sparqlmap .``
 
  and run the image with
  ``sudo docker run sparqlmap``
