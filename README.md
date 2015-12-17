@@ -45,17 +45,7 @@ Next you must build the image and run it.
 ## sparqlmap
 SparqlMap - A SPARQL to SQL rewriter based on R2RML specification.
 
-### Change Config
 
-You can find the config data in the file db.properties. This file include
-the jdbc url, username and password. Before build you must change it to your database. Default it works
-with the mysql docker.
-
-    jdbc.url=jdbc:mysql://172.17.42.1:3306/benchmark?padCharsWithSpace=true&sessionVariables=sql_mode='ANSI_QUOTES'
-    jdbc.username=admin
-    jdbc.password=password
-    jdbc.poolminconnections=5
-    jdbc.poolmaxconnections=20
 
 ### Build and Run
 
@@ -63,6 +53,21 @@ You can build the image with
  ``sudo docker  build -t sparqlmap .``
 
  and run the image with
- ``sudo docker run sparqlmap``
+ ``sudo docker run -e  DB_URL=jdbc:mysql://172.17.42.1:3307/benchmark?padCharsWithSpace=true&sessionVariables=sql_mode='ANSI_QUOTES'  -e DB_USER=admin  -e DB_PASS=password sparqlmap``
 
  After this sparqlmap generate a r2rml file and write it in the terminal.
+
+## docker-compose.yml
+
+This is the docer compose with the mysql and sparqlmap container. You can start it with 
+ ``sudo docker-compose up``. 
+After this sparqlmap and mysql start and generate a dumb.
+
+
+## Errors
+If you run ``sudo docker run -p 172.17.42.1:3306:3306 mysql`` or ``sudo docker-compose up`` and you see this kind of error:
+``Error response from daemon: Cannot start container 9ba34fb583134b4d0fef08c442afeb16c544d1b1adc5152ad994feda954fa515: failed to create endpoint sparqlmap on network bridge: Error starting userland proxy: listen tcp 172.17.42.1:14242:bind: cannot assign requested address``
+
+Check you docker vision with `` sudo docker vision ``. If you have docker vision 1.9, you shall change the ip adress to 172.17.0.1 
+Because docker 1.9 use an other standart ip adress.
+
