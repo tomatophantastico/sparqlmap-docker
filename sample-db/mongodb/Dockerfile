@@ -1,6 +1,6 @@
 FROM mongo:3.0
 
-ADD dataset/*.json /tmp/
+RUN mkdir -p /data/db
 
-
+EXPOSE 27017
 
