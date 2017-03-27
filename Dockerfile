@@ -1,15 +1,17 @@
-FROM java:openjdk-7-jdk
+FROM maven:3-jdk-8
 
-RUN mkdir /usr/sparqlmap
-WORKDIR /usr/sparqlmap
+MAINTAINER Jörg Unbehauen 
 
-RUN git clone https://github.com/tomatophantastico/sparqlmap-core/
-RUN cd sparqlmap-core && git checkout feature/travisCi
+RUN apt-get update && apt-get install -y git
 
-RUN cd sparqlmap-core/ && ./gradlew -x test publishToMavenLocal
+RUN git clone --branch v0.7.4 https://github.com/tomatophantastico/sparqlmap.git && cd sparqlmap && ./gradlew installDist
+RUN cd sparqlmap && mkdir /opt/sparqlmap && mv sparqlmap-client/build/install/sparqlmap-client/* /opt/sparqlmap && cd .. && rm -r sparqlmap
 
-RUN git clone https://github.com/tomatophantastico/sparqlmap/ 
+COPY docker-entrypoint.sh  /opt/sparqlmap
 
-RUN cd sparqlmap/ && ./gradlew -x test installDist 
+RUN ln -s /opt/sparqlmap/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 
-CMD /usr/sparqlmap/sparqlmap/build/install/sparqlmap/bin/sparqlmap -dburl $DB_URL -dbuser $DB_USER -dbpassword $DB_PASS
+EXPOSE 8080
+ 
+ENTRYPOINT ["docker-entrypoint.sh"]
+
